@@ -1,7 +1,6 @@
 package com.hedgdifuse.dishessampleapp.domain.impl
 
 import com.hedgdifuse.dishessampleapp.data.DishRepository
-import com.hedgdifuse.dishessampleapp.domain.Dish
 import com.hedgdifuse.dishessampleapp.domain.DishesInteractor
 import com.hedgdifuse.dishessampleapp.domain.DishesState
 import com.hedgdifuse.dishessampleapp.domain.ErrorType
@@ -9,8 +8,6 @@ import com.hedgdifuse.dishessampleapp.domain.mapper.toDomainEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class DishesInteractorImpl(
@@ -34,9 +31,8 @@ class DishesInteractorImpl(
         dishesRepository.deleteDishes(ids)
     }
 
-    override suspend fun getById(id: String) {
-        dishesRepository.getDishById(id)
-    }
+    override suspend fun getById(id: String) =
+        dishesRepository.getDishById(id)?.toDomainEntity()
 
     private var collectorJob: Job? = null
 

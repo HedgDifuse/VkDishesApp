@@ -42,7 +42,6 @@ class DishRepositoryImpl(
 
     override suspend fun getDishById(id: String) =
         memoryCacheDataSource.getById(id)
-            ?: withContext(networkQueueScope.coroutineContext) { networkDataSource.getById(id) }
 
     companion object {
         private const val MAX_PARRALLEL_REQUESTS = 4

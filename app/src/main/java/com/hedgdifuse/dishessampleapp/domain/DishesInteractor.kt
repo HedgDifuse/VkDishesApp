@@ -10,5 +10,5 @@ interface DishesInteractor {
 
    suspend fun deleteDishes(ids: List<String>)
 
-   suspend fun getById(id: String)
+   suspend fun getById(id: String): Dish?
 }

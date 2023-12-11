@@ -1,7 +1,6 @@
 package com.hedgdifuse.dishessampleapp.ui.screens.list
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,9 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
@@ -29,20 +26,23 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.hedgdifuse.dishessampleapp.MainActivity.Companion.LIST_SCREEN
 import com.hedgdifuse.dishessampleapp.R
 import com.hedgdifuse.dishessampleapp.domain.Dish
 import com.hedgdifuse.dishessampleapp.ui.components.DishCard
-import com.hedgdifuse.dishessampleapp.ui.state.ButtonState
-import com.hedgdifuse.dishessampleapp.ui.state.DishesScreenState
-import kotlinx.coroutines.Dispatchers
+import com.hedgdifuse.dishessampleapp.ui.components.screen.ErrorScreen
+import com.hedgdifuse.dishessampleapp.ui.components.screen.LoadingScreen
+import com.hedgdifuse.dishessampleapp.ui.state.list.ButtonState
+import com.hedgdifuse.dishessampleapp.ui.state.list.DishesScreenState
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedCrossfadeTargetStateParameter")
 @Composable
 fun DishesScreen(
+    navController: NavController,
     viewModel: DishesListViewModel = hiltViewModel()
 ) {
     val screenState by viewModel.screenState.collectAsState()
@@ -79,37 +79,15 @@ fun DishesScreen(
         Crossfade(screenState, label = "") {
             when (it) {
                 is DishesScreenState.Error -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(padding),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            Icon(Icons.Default.Info, contentDescription = null)
-                            Text(
-                                stringResource(it.errorText),
-                                textAlign = TextAlign.Center
-                            )
-                            Button(onClick = {
-                                coroutineScope.launch { viewModel.retry() }
-                            }) {
-                                Text(stringResource(R.string.retry))
-                            }
-                        }
-                    }
+                    ErrorScreen(
+                        onRetryClick = { coroutineScope.launch { viewModel.retry() } },
+                        icon = Icons.Default.Warning,
+                        errorText = it.errorText
+                    )
                 }
 
                 DishesScreenState.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
+                    LoadingScreen()
                 }
 
                 is DishesScreenState.Loaded -> {
@@ -150,7 +128,8 @@ fun DishesScreen(
                                     coroutineScope.launch {
                                         viewModel.mark(dish, it)
                                     }
-                                }
+                                },
+                                onClick = { navController.navigate("$LIST_SCREEN/${dish.id}") }
                             )
                         }
                     }

@@ -5,10 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.hedgdifuse.dishessampleapp.domain.Dish
 import com.hedgdifuse.dishessampleapp.domain.DishesInteractor
 import com.hedgdifuse.dishessampleapp.ui.mapper.toPresentationEntity
-import com.hedgdifuse.dishessampleapp.ui.state.ButtonState
-import com.hedgdifuse.dishessampleapp.ui.state.DishesScreenState
+import com.hedgdifuse.dishessampleapp.ui.state.list.ButtonState
+import com.hedgdifuse.dishessampleapp.ui.state.list.DishesScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +16,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,13 +39,13 @@ class DishesListViewModel @Inject constructor(
             initialValue = DishesScreenState.Loading
         )
 
-    suspend fun retry() {
-        if (screenState.value !is DishesScreenState.Error) return
+    suspend fun retry() = withContext(viewModelScope.coroutineContext) {
+        if (screenState.value !is DishesScreenState.Error) return@withContext
 
         dishesInteractor.load()
     }
 
-    suspend fun mark(dish: Dish, checked: Boolean) {
+    suspend fun mark(dish: Dish, checked: Boolean) = withContext(viewModelScope.coroutineContext) {
         mutex.withLock {
             val set = dishIdToRemove.value.toMutableSet()
 
@@ -60,8 +60,8 @@ class DishesListViewModel @Inject constructor(
         }
     }
 
-    suspend fun removeMarked() {
-        val dishesIds = dishIdToRemove.replayCache.firstOrNull()?.toList() ?: return
+    suspend fun removeMarked() = withContext(viewModelScope.coroutineContext)  {
+        val dishesIds = dishIdToRemove.replayCache.firstOrNull()?.toList() ?: return@withContext
 
         removeButtonState.emit(ButtonState.LOADING)
 

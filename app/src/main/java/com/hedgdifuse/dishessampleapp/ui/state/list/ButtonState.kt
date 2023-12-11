@@ -1,4 +1,4 @@
-package com.hedgdifuse.dishessampleapp.ui.state
+package com.hedgdifuse.dishessampleapp.ui.state.list
 
 enum class ButtonState {
     ACTIVE,

@@ -10,20 +10,23 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
+import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
 class DataModule {
 
+    @Singleton
     @Provides
     fun provideNetworkDishDataSource(): DishesDataSource =
         NetworkDishesDataSourceImpl()
 
+    @Singleton
     @Provides
     fun provideMemoryCacheDishDataSource(): MemoryCacheDishesDataSource =
         MemoryCacheDishesDataSourceImpl()
 
+    @Singleton
     @Provides
     fun provideDishRepository(
         dishesDataSource: DishesDataSource,

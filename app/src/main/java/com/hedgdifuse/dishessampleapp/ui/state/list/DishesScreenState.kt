@@ -1,8 +1,6 @@
-package com.hedgdifuse.dishessampleapp.ui.state
+package com.hedgdifuse.dishessampleapp.ui.state.list
 
 import androidx.annotation.StringRes
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
 import com.hedgdifuse.dishessampleapp.domain.Dish
 
 sealed interface DishesScreenState {
