@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">DishesSampleApp</string>
+    <string name="price_format">%s ₽</string>
+    <string name="no_internet_error">Отсутствует подключение к интернету.\nПроверьте подключение</string>
+    <string name="remove">Удалить выбранное</string>
+    <string name="no_dishes">Список блюд пуст</string>
+    <string name="retry">Повторить</string>
+</resources>
